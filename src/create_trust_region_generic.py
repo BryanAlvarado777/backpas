@@ -82,7 +82,7 @@ def main():
     
     if len(sys.argv) != 7:
         print("Usage: create_trust_region.py <dataset> <partition_path> <log_path> <files_limit> <P> <RP>")
-        print("Example: create_trust_region.py /src/datasets/pbo16 /src/wkdir/pbo16/exp1/0.pkl /src/wdir/pbo16/exp1/logs 60")
+        print("Example: create_trust_region.py /src/datasets/pbo16 /src/wkdir/pbo16/exp1/0.pkl /src/wdir/pbo16/exp1/logs 60 0.1 0.9")
         sys.exit(1)
     dataset_path = sys.argv[1]
     partition_path = sys.argv[2]
@@ -108,7 +108,7 @@ def main():
     model.load_state_dict(state)
     model.eval()
     for partition_name in partitions["tests"]:
-        ps_instances_path = f'{log_path}/test/{partition_name}/predict_and_search_KTD_{P:6f}_{RP:6f}'
+        ps_instances_path = f'{log_path}/test/{partition_name}/predict_and_search_P_RP_{P:6f}_{RP:6f}'
         if not os.path.exists(ps_instances_path):
             os.makedirs(ps_instances_path)
         else:

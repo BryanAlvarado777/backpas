@@ -8,7 +8,7 @@ from helper_pas import get_a_new2
 import pandas as pd
 import sys
 here = os.path.dirname(__file__)
-
+CREATE_MILP_DATASET = False
 def get_backbone_target(backbone_path: str, l_map:dict):
     target = [0]*len(l_map)
     complete_backbone = False
@@ -44,10 +44,14 @@ def collect(instance_path:str, backbone_path:str, filename:str ,ml_dataset_path 
     try:
         #get bipartite graph , binary variables' indices
         #bipartite_graph = get_bipartite_graph(instance_filepath)
-        A,v_map,v_nodes,c_nodes,b_vars =get_a_new2(instance_filepath)
-        bipartite_graph=(A,v_map,v_nodes,c_nodes)
-        
-        literals_map = transoform_vmap_to_lmap(v_map)
+        if CREATE_MILP_DATASET:
+            A,v_map,v_nodes,c_nodes,b_vars =get_a_new2(instance_filepath)
+            bipartite_graph=(A,v_map,v_nodes,c_nodes)
+            literals_map = transoform_vmap_to_lmap(v_map)
+        else:
+            bipartite_graph = get_bipartite_graph(instance_filepath)
+            literals_map = bipartite_graph[1]
+
         backbone_target = get_backbone_target(backbone_filepath,literals_map)
         data = {
             "X": bipartite_graph,
@@ -66,8 +70,8 @@ def collect(instance_path:str, backbone_path:str, filename:str ,ml_dataset_path 
 if __name__ == '__main__':
     set_start_method('spawn')
     if len(sys.argv) != 2:
-        print("Usage: create_dataset.py <dataset>")
-        print("Example: create_dataset.py /src/datasets/pbo16")
+        print("Usage: create_dataset_generic.py <dataset>")
+        print("Example: create_dataset_generic.py /src/datasets/pbo16")
         sys.exit(1)
     dataset_path = sys.argv[1]
     
