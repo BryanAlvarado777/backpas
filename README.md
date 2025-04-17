@@ -138,11 +138,29 @@ Generated structure:
 
 After generating trust regions, you can run a solver like **Gurobi** on the modified instances for evaluation.
 
-## Train with original PaS bipartite graph.
-You could use the original bipartitie graph representation (withou using literelas) and the original network presented in *A GNN-guided Predict-and-Search Framework for Mixed-Integer Linear Programming.*. To do that you should modify the create_trust_region_generic.py and set the vairable CREATE_MILP_DATASET=True. Then you should also modify the train.py script and replace the line 
-model = BackboneAndValuesPredictor().to(DEVICE)
-with 
-model = MilpBackboneAndValuesPredictor().to(DEVICE)
+## Train with Original PaS Bipartite Graph
+
+You can use the original bipartite graph representation—**without literals**—and the original network architecture described in *A GNN-guided Predict-and-Search Framework for Mixed-Integer Linear Programming*. This setup mirrors the MILP version of Predict-and-Search.
+
+To enable this:
+
+1. **Modify the trust region script**  
+   In `src/create_trust_region_generic.py`, set the following variable:
+   ```python
+   CREATE_MILP_DATASET = True
+   ```
+
+2. **Update the model in the training script**  
+   In `src/train.py`, replace:
+   ```python
+   model = BackboneAndValuesPredictor().to(DEVICE)
+   ```
+   with:
+   ```python
+   model = MilpBackboneAndValuesPredictor().to(DEVICE)
+   ```
+
+This configuration will use the same data and training flow, but with the MILP bipartite graph and model variant used in the original paper.
 
 ## Acknowledgment
 
