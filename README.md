@@ -6,8 +6,6 @@
 2. **Train a model**  
 3. **Generate a trust region and run a solver**
 
----
-
 ## Repository Structure
 
 ### `src/` – Core Scripts
@@ -36,7 +34,6 @@ Contains scripts to define training, validation, and testing partitions. These a
 | `utils.py` | Helper functions to build experiment `.pkl` files that define partitions. |
 | `create_experiment_from_distmiplib.py` | Builds an experiment setup from a folder of instances using filename prefixes (`train_`, `val_`, `test_easy_`, etc.). |
 
----
 
 ## Step-by-Step Usage
 
@@ -66,8 +63,6 @@ Prepare your dataset as follows:
   └── instance_name.opb.pkl   # Pickled file with the bipartite graph and backbone labels
   ```
 
----
-
 ### 2. Create Experiment Partitions
 
 Experiments define how data is split into training, validation, and test sets.
@@ -93,8 +88,6 @@ Experiments define how data is split into training, validation, and test sets.
   └── readme.txt  # Partition size info  
   ```
 
----
-
 ### 3. Train the Model
 
 Train the model by running:
@@ -115,8 +108,6 @@ Outputs:
 - `model_best.pth` – Best performing model checkpoint  
 - `model_last.pth` – Final model checkpoint  
 
----
-
 ### 4. Create Trust Region
 
 Run:
@@ -134,6 +125,8 @@ python src/create_trust_region_generic.py <dataset_path> <partition_path> <log_p
 | `P` | Percentage of variables to include in the trust region |
 | `RP` | Retrieval Precision at `P` (used to compute Delta) |
 
+The `P` and `RP` pairs could be read from the generated `metrics.log` file during training
+
 Generated structure:
 
 ```
@@ -144,13 +137,34 @@ Generated structure:
 
 > **Note:** If `files_limit` is smaller than the number of partition instances, a random subset of size `files_limit` will be used. This feature was mainly for debugging and can be ignored (use `files_limit=99999`).
 
----
 
 ### 5. Run a Solver
 
 After generating trust regions, you can run a solver like **Gurobi** on the modified instances for evaluation.
 
----
+## Train with Original PaS Bipartite Graph
+
+You can use the original bipartite graph representation—**without literals**—and the original network architecture described in *A GNN-guided Predict-and-Search Framework for Mixed-Integer Linear Programming*. This setup mirrors the MILP version of Predict-and-Search.
+
+To enable this:
+
+1. **Modify the trust region script**  
+   In `src/create_trust_region_generic.py`, set the following variable:
+   ```python
+   CREATE_MILP_DATASET = True
+   ```
+
+2. **Update the model in the training script**  
+   In `src/train.py`, replace:
+   ```python
+   model = BackboneAndValuesPredictor().to(DEVICE)
+   ```
+   with:
+   ```python
+   model = MilpBackboneAndValuesPredictor().to(DEVICE)
+   ```
+
+This configuration will use the same data and training flow, but with the MILP bipartite graph and model variant used in the original paper.
 
 ## Citation
 
