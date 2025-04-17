@@ -34,7 +34,6 @@ Contains scripts to define training, validation, and testing partitions. These a
 | `utils.py` | Helper functions to build experiment `.pkl` files that define partitions. |
 | `create_experiment_from_distmiplib.py` | Builds an experiment setup from a folder of instances using filename prefixes (`train_`, `val_`, `test_easy_`, etc.). |
 
-
 ## Step-by-Step Usage
 
 ### 1. Create Dataset
@@ -125,8 +124,6 @@ python src/create_trust_region_generic.py <dataset_path> <partition_path> <log_p
 | `P` | Percentage of variables to include in the trust region |
 | `RP` | Retrieval Precision at `P` (used to compute Delta) |
 
-The `P` and `RP` pairs could be read from the generated `metrics.log` file during training
-
 Generated structure:
 
 ```
@@ -137,38 +134,21 @@ Generated structure:
 
 > **Note:** If `files_limit` is smaller than the number of partition instances, a random subset of size `files_limit` will be used. This feature was mainly for debugging and can be ignored (use `files_limit=99999`).
 
-
 ### 5. Run a Solver
 
 After generating trust regions, you can run a solver like **Gurobi** on the modified instances for evaluation.
 
-## Train with Original PaS Bipartite Graph
+## Train with original PaS bipartite graph.
+You could use the original bipartitie graph representation (withou using literelas) and the original network presented in *A GNN-guided Predict-and-Search Framework for Mixed-Integer Linear Programming.*. To do that you should modify the create_trust_region_generic.py and set the vairable CREATE_MILP_DATASET=True. Then you should also modify the train.py script and replace the line 
+model = BackboneAndValuesPredictor().to(DEVICE)
+with 
+model = MilpBackboneAndValuesPredictor().to(DEVICE)
 
-You can use the original bipartite graph representation—**without literals**—and the original network architecture described in *A GNN-guided Predict-and-Search Framework for Mixed-Integer Linear Programming*. This setup mirrors the MILP version of Predict-and-Search.
+## Acknowledgment
 
-To enable this:
+This project builds upon code from the repository [Predict-and-Search_MILP_method](https://github.com/sribdcn/Predict-and-Search_MILP_method), which is licensed under the MIT License. The original license is included in the `third_party/` folder of this repository.
 
-1. **Modify the trust region script**  
-   In `src/create_trust_region_generic.py`, set the following variable:
-   ```python
-   CREATE_MILP_DATASET = True
-   ```
-
-2. **Update the model in the training script**  
-   In `src/train.py`, replace:
-   ```python
-   model = BackboneAndValuesPredictor().to(DEVICE)
-   ```
-   with:
-   ```python
-   model = MilpBackboneAndValuesPredictor().to(DEVICE)
-   ```
-
-This configuration will use the same data and training flow, but with the MILP bipartite graph and model variant used in the original paper.
-
-## Citation
-
-This code is based on the GitHub repository [Predict-and-Search_MILP_method](https://github.com/sribdcn/Predict-and-Search_MILP_method) and the following paper:
+The original code is associated with the following paper, which introduces the Predict-and-Search framework:
 
 > Han, Q., Yang, L., Chen, Q., Zhou, X., Zhang, D., Wang, A., ... & Luo, X. (2023).  
 > *A GNN-guided Predict-and-Search Framework for Mixed-Integer Linear Programming.*  
