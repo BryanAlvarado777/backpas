@@ -159,7 +159,14 @@ To enable this:
    ```python
    model = MilpBackboneAndValuesPredictor().to(DEVICE)
    ```
-
+   Also replace the line:
+   ```python
+   end_index = start_index+batch.ntvars[i]//2
+   ```
+   with:
+   ```python
+   end_index = start_index+batch.ntvars[i]
+   ```
 This configuration will use the same data and training flow, but with the MILP bipartite graph and model variant used in the original paper.
 
 ## Acknowledgment
