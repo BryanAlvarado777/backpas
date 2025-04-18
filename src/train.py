@@ -89,7 +89,7 @@ def one_epoch(model, data_loader, metric_aggregator, device, batch_accumulation,
             start_index = 0
             loss = torch.zeros(1,device=device)
             for i in range(batch.ntvars.shape[0]):
-                end_index = start_index+batch.ntvars[i]
+                end_index = start_index+batch.ntvars[i]//2
                 # instance slices
                 instance_pred = pred[start_index:end_index]
                 instance_target = batch.y[start_index:end_index]
